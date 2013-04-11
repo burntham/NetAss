@@ -207,18 +207,21 @@ public class Client extends JFrame{
 		displayMessage( "\nCLIENT> "+ message );
 		
 		try {
+			//upload
 			if(message.contains(cmd.upload.toString())){
 				String filename = message.split(" ")[1];
-				sendSensorData(filename);
+				sendSensorData(filename);//Upload sensor data
 			}
+			//close
 			else if(message.contains(cmd.close.toString())){
 				if(chart != null){
-					chart.dispose();
+					chart.dispose();//close bar chart
 				}
 				if(xychart != null){
-					xychart.dispose();
+					xychart.dispose();//attempt to close line chart - does not work
 				}
 			}
+			//login
 			else if(message.contains(cmd.login.toString())){
 				String[] login = message.split(" ");
 				try{
@@ -231,16 +234,16 @@ public class Client extends JFrame{
 				}
 				
 			}
-			
+			//clear
 			else if(message.contains(cmd.clear.toString())){
-				displayArea.append("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+				displayArea.append("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 			}
-			
+			//logs
 			else if(message.contains(cmd.logs.toString())){
 				getLogs();
 				System.out.println("Method called: getLogs()");
 			}
-			
+			//getid
 			else if(message.contains(cmd.id.toString())){
 				if(message.contains(cmd.all.toString())){
 					getGroupIDs();
@@ -251,9 +254,10 @@ public class Client extends JFrame{
 				}
 			}
 			
+			//get
 			else if(message.contains(cmd.get.toString())){
 				if(message.contains(cmd.all.toString())){
-					if(message.contains(cmd.raw.toString())){
+					if(message.contains(cmd.raw.toString())){//graphs it!
 						if(xychart != null){
 							xychart.dispose();
 						}
@@ -284,6 +288,7 @@ public class Client extends JFrame{
 				}
 			}
 			
+			//graph
 			if(message.contains(cmd.graph.toString())){
 					if(chart != null){
 						chart.dispose();
@@ -305,7 +310,7 @@ public class Client extends JFrame{
 			return;
 		}
 		else if(message.substring(0, 1).equalsIgnoreCase("0")){
-			//server returns login error
+			//server returns login error - this is not needed here
 			//displayMessage("\nInvalid Login: please try again.");
 		}
 		displayMessage("\n" + response.substring(2));
@@ -323,6 +328,7 @@ public class Client extends JFrame{
 			displayMessage("\nError on server.");
 			return;
 		}
+		//process server response of logs, format output and display in gui
 		String [] lines = response.substring(3,response.length()-1).split("\\],[\\s]*\\[");
 		String message = "";
 		for (String line : lines){
