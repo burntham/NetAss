@@ -40,6 +40,7 @@ public class Client extends JFrame{
 	private String dataStringTemp = "Group 4=3:Group 8=1:Group 1=4";  // group1=y1:group2=y2: ... :groupn=yn
 	private String dataStringLight = "Group 4=4:Group 8=1:Group 1=3"; // group1=y1:group2=y2: ... :groupn=yn
 	private BarChart chart;
+	private LineGraph xychart;
 	private Sensor group4;
 	private Sensor group8;
 	private Sensor group10;
@@ -152,7 +153,7 @@ public class Client extends JFrame{
 	private void sendData( String message )
 	{
 		try
-		{	System.out.println(message);
+		{
 			output.write(message + "\n");
 			output.flush(); // flush data to output
 		}
@@ -190,7 +191,6 @@ public class Client extends JFrame{
 		);
 	} 
 	
-	//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx	
 	// process the messages sent from the server
 	private void parseMessage(String message, String source){
 		
@@ -207,8 +207,11 @@ public class Client extends JFrame{
 				sendSensorData(filename);
 			}
 			else if(message.contains(cmd.close.toString())){
-				if(message.contains(cmd.bar.toString())){
+				if(chart != null){
 					chart.dispose();
+				}
+				if(xychart != null){
+					xychart.dispose();
 				}
 			}
 			else if(message.contains(cmd.login.toString())){
@@ -246,7 +249,10 @@ public class Client extends JFrame{
 			else if(message.contains(cmd.get.toString())){
 				if(message.contains(cmd.all.toString())){
 					if(message.contains(cmd.raw.toString())){
-						getRawAll();
+						if(xychart != null){
+							xychart.dispose();
+						}
+						getRawAll(message);
 						System.out.println("Method called: getRawAll()");
 					}
 					else{
@@ -309,15 +315,21 @@ public class Client extends JFrame{
 		}
 		else if(response.substring(0, 1).equalsIgnoreCase("0")){
 			displayMessage("\nError on server.");
+			return;
 		}
 		displayMessage("\n" + response.substring(2));
 	}
 	
-	// incomplete
-	private void getRawAll(){
+	private void getRawAll(String message){
 		parseMessage("get 10 raw", "graph");
 		parseMessage("get 8 raw", "graph");
 		parseMessage("get 4 raw", "graph");
+		String type;
+		if(message.contains(cmd.temp.toString())){type = "Temperature";}
+		else if(message.contains(cmd.light.toString())){type = "Light";}
+		else{displayMessage("\nNo valid graph arguments supplied.");return;}
+		
+		drawGraphRaw("4 8 10", type);
 	}
 	
 	private void getAll(){
@@ -330,7 +342,9 @@ public class Client extends JFrame{
 		}
 		else if(response.substring(0, 1).equalsIgnoreCase("0")){
 			displayMessage("\nError on server.");
+			return;
 		}
+		
 		String a = response.substring(3);//[mean_temp,mode_temp,median_temp,variance_temp,standard_dev_temp],[mean_light,mode_light,median_light,variance_light,standard_dev_light]" 
 		String b = a.replace("[", "");
 		String c = b.replace("]","");//mean_temp,mode_temp,median_temp,variance_temp,standard_dev_temp,mean_light,mode_light,median_light,variance_light,standard_dev_light" 
@@ -341,7 +355,6 @@ public class Client extends JFrame{
 		displayMessage("\n" + toPrint1 + toPrint2);
 	}
 	
-	// incomplete
 	private void getRawGroup(String id, String source, String message){
 		String response = "";
 		sendData("getRawGroup("+id+")");
@@ -352,6 +365,7 @@ public class Client extends JFrame{
 		}
 		else if(response.substring(0, 1).equalsIgnoreCase("0")){
 			displayMessage("\nError on server.");
+			return;
 		}
 		if(id.equals("10")){ raw10 = response.substring(3);}
 		else if(id.equals("8")){ raw8 = response.substring(3);}
@@ -362,11 +376,8 @@ public class Client extends JFrame{
 		}
 		else{
 			String type;
-			if(message.contains(cmd.mean.toString())){type = "Mean";}
-			else if(message.contains(cmd.median.toString())){type = "Median";}
-			else if(message.contains(cmd.mode.toString())){type = "Mode";}
-			else if(message.contains(cmd.std.toString())){type = "Standard Deviation";}
-			else if(message.contains(cmd.variance.toString())){type = "Variance";}
+			if(message.contains(cmd.temp.toString())){type = "Temperature";}
+			else if(message.contains(cmd.light.toString())){type = "Light";}
 			else{displayMessage("\nNo valid graph arguments supplied.");return;}
 			
 			drawGraphRaw(id, type);
@@ -413,11 +424,10 @@ public class Client extends JFrame{
 		}
 		else if(message.substring(0, 1).equalsIgnoreCase("0")){
 			displayMessage("\nError on server.");
+			return;
 		}
 		displayMessage("\n" + response.substring(2));
 	}
-	
-	// incomplete
 	
 	private void editLocalData(String[] input, String id, String graph){
 		displayMessage("\nEditing local data...");
@@ -562,13 +572,12 @@ public class Client extends JFrame{
 			scan.close();
 	}
 	
-
 	private String getMessage() {
 		
-		message = "nullMessage";
+		message = "";
 		String temp="";
 		int counter = 0;
-		int timeToWait = 10;//in seconds
+		int timeToWait = 30;
 		try {
 			while(!input.ready() && counter < timeToWait){
 				try{
@@ -579,17 +588,18 @@ public class Client extends JFrame{
 			System.out.print("Message is: ");
 			while(input.ready() && (c=(char)input.read())!='\n'){
 				temp+=c;
-				System.out.print(c);
+				//System.out.print(c);
 			}
+			System.out.println(temp);
 			System.out.println("");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		System.out.println("Stopped waiting: " + counter);
 		message = temp;
 		return message;
 	}
-	
 	
 	private void drawGraph(String message){
 		
@@ -645,11 +655,76 @@ public class Client extends JFrame{
 			chart.pack();
 			RefineryUtilities.centerFrameOnScreen(chart);
 			chart.setVisible(true);
-			chart.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			//chart.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		}
 	}
 
 	private void drawGraphRaw(String id, String type){
+		
+		boolean draw4 = false, draw8= false, draw10 = false;
+		
+		List<Data> data4 = new ArrayList<>();
+		List<Data> data8 = new ArrayList<>();
+		List<Data> data10 = new ArrayList<>();
+		
+		if(id.contains("10")){
+			draw10 = true;
+			fillDataList(data10, raw10, type);
+		}
+		if(id.contains("8")){
+			draw8 = true;
+			fillDataList(data8, raw8, type);
+		}
+		if(id.contains("4")){
+			draw4 = true;
+			fillDataList(data4, raw4, type);
+		}
+		
+		LineGraph xychart = new LineGraph("Line Chart", "Raw "+ type + " Readings", "Timestamp", type, 
+				draw4, draw8, draw10, data4, data8, data10);
+		xychart.pack();
+		RefineryUtilities.centerFrameOnScreen(xychart);
+		xychart.setVisible(true);
+		
+	}
+	
+	private void fillDataList(List<Data> data, String dataString, String type){
+		String a = dataString.replace("[", "");
+		String b = a.replace("]", "");
+		String[] c = b.split(",");
+		
+		if(c.length%3 != 0){
+			System.out.println("Some server cannot be converted");
+		}
+		
+		double temp = 0;
+		double light = 0;
+		double time = 0;
+		
+		for(int i = 0; i < c.length; ++i){
+			try{
+				if(i% 3 == 0){
+					temp = Double.parseDouble(c[i]);
+				}
+				else if(i% 3 == 1){
+					light = Double.parseDouble(c[i]);
+				}
+				else if(i% 3 == 2){
+					time = Double.parseDouble(c[i]);
+					Data d;
+					if(type.equals("Temperature")){
+						d = new Data(time, temp);
+					}
+					else{
+						d = new Data(time, light);
+					}
+					data.add(d);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
 		
 	}
 	

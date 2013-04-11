@@ -150,7 +150,7 @@ public class SingleSocketServer {
 						if (rs==null){response.success=false;response.responseString="Error occured in fetching result set from the database.";continue;}
 						int count =0;
 						while(rs.next()){
-							float temp = rs.getFloat("heat");
+							float temp = rs.getFloat("temp");
 							tempReadings.add(temp);
 							float light = rs.getFloat("light");
 							lightReadings.add(light);

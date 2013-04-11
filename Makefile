@@ -1,6 +1,6 @@
 JC = javac
 SFILES = SingleSocketServer.java 
-CFILES = Client.java BarChart.java ClientTest.java Sensor.java
+CFILES = Client.java BarChart.java ClientTest.java Sensor.java LineGraph.java
 CLIBS = -cp .:clibs/*:./
 SLIBS = -cp .:slibs/*:./
 
