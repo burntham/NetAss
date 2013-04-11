@@ -549,7 +549,8 @@ public class Client extends JFrame{
 				}
 				catch (Exception e) {
 					++failed;
-					e.printStackTrace();
+					System.out.println("Sending Sensor Data Failure");
+					//e.printStackTrace();
 				}
 				
 
