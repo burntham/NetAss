@@ -10,6 +10,41 @@ Compilation + Execution:
 	Optionally, run 'make compileClient' to compile
 	the client can then be executed as: java -cp .:clibs/*:./ ClientTest.java <optional args>
 	Optional args can be used to speccify the server address (when left blank, client automatically connects to nightmare)
+	
+Use:
+	Users interact with the client via text input box at the bottom of the window - with the following commands:
+		login <username> <password>
+			:logs the user in
+		upload <textfilename>
+			:uploads a specified files data to the server
+		clear
+			:clears the window
+		get logs
+			:Prints the server log
+		get id
+			:Returns the id of the clients group (10)
+		get id all
+			:Returns the ids of all the groups that have sent data to the server
+		get <group id>
+			:Returns aggregate data for specified group
+		get <group id> raw <data_type>
+			:Draws a linegraph of the groups raw data.
+		get all
+			:Prints all groups aggregate data
+		get all raw <data_type>
+			:Draws a line graph representing all the groups data (colour coded by group)
+		graph <stat_type> <data_type>
+			:Draws a bar chart allowing for the comparison of the 3 groups' data
+
+
+
+	<data_type> can be any either:
+		light
+		temp
+
+	<stat_type> can be any of the following:
+		mean, median, mode, variance, std
+		std is for standard deviation
 
 
 FileList:
@@ -21,7 +56,6 @@ FileList:
 
 File Descriptions:
 	ClientTest.java:
-
 
 	BarChart.java:
 
