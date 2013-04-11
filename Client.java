@@ -367,10 +367,13 @@ public class Client extends JFrame{
 			displayMessage("\nError on server.");
 			return;
 		}
-		if(id.equals("10")){ raw10 = response.substring(3);}
-		else if(id.equals("8")){ raw8 = response.substring(3);}
-		else if(id.equals("4")){ raw4 = response.substring(3);}
-		
+		try{
+			if(id.equals("10")){ raw10 = response.substring(3);}
+			else if(id.equals("8")){ raw8 = response.substring(3);}
+			else if(id.equals("4")){ raw4 = response.substring(3);}
+		}catch(Exception e){
+			displayMessage("\nClient tried to be good for user, but data was not there - please no hate client :'(");
+		}
 		if(source.contains("graph")){
 			return;
 		}
@@ -401,15 +404,16 @@ public class Client extends JFrame{
 		String a = response.substring(3);//[mean_temp,mode_temp,median_temp,variance_temp,standard_dev_temp],[mean_light,mode_light,median_light,variance_light,standard_dev_light]" 
 		String b = a.replace("[", "");
 		String c = b.replace("]","");//mean_temp,mode_temp,median_temp,variance_temp,standard_dev_temp,mean_light,mode_light,median_light,variance_light,standard_dev_light" 
-		String[] d = c.split(",");
+		String d = c.replace(" ", "");
+		String[] e = d.split(",");
 		
 		if(source.contains("graph")){
-			editLocalData(d, id, source);
+			editLocalData(e, id, source);
 			return;
 		}
 		
-		String toPrint1 = "\nTemperature:\nMean = " + d[0] + "\nMode = " + d[1] + "\nMedian = " + d[2] + "\nVariance = " + d[3] + "\nStandard Deviation = " + d[4];
-		String toPrint2 = "\nLight:\nMean = " + d[5] + "\nMode = " + d[6] + "\nMedian = " + d[7] + "\nVariance = " + d[8] + "\nStandard Deviation = " + d[9];
+		String toPrint1 = "\nTemperature:\nMean = " + e[0] + "\nMode = " + e[1] + "\nMedian = " + e[2] + "\nVariance = " + e[3] + "\nStandard Deviation = " + e[4];
+		String toPrint2 = "\nLight:\nMean = " + e[5] + "\nMode = " + e[6] + "\nMedian = " + e[7] + "\nVariance = " + e[8] + "\nStandard Deviation = " + e[9];
 	
 		displayMessage("\n" + toPrint1 + toPrint2);
 	}
@@ -469,7 +473,7 @@ public class Client extends JFrame{
 		}
 		String d1 = ""; String d2 = ""; String d3 = "";
 		String e1 = ""; String e2 = ""; String e3 = "";
-		if(graph.equals("Mean")){
+		if(graph.contains("Mean")){
 			d1 = group4.meanT;
 			d2 = group8.meanT;
 			d3 = group10.meanT;
@@ -477,7 +481,7 @@ public class Client extends JFrame{
 			e2 = group8.meanL;
 			e3 = group10.meanL;
 		}
-		else if(graph.equals("Median")){
+		else if(graph.contains("Median")){
 			d1 = group4.meanT;
 			d2 = group8.meanT;
 			d3 = group10.meanT;
@@ -485,7 +489,7 @@ public class Client extends JFrame{
 			e2 = group8.meanL;
 			e3 = group10.meanL;
 		}
-		else if(graph.equals("Mode")){
+		else if(graph.contains("Mode")){
 			d1 = group4.meanT;
 			d2 = group8.meanT;
 			d3 = group10.meanT;
@@ -493,7 +497,7 @@ public class Client extends JFrame{
 			e2 = group8.meanL;
 			e3 = group10.meanL;
 		}
-		else if(graph.equals("Variance")){
+		else if(graph.contains("Variance")){
 			d1 = group4.meanT;
 			d2 = group8.meanT;
 			d3 = group10.meanT;
@@ -501,7 +505,7 @@ public class Client extends JFrame{
 			e2 = group8.meanL;
 			e3 = group10.meanL;
 		}
-		else if(graph.equals("Standard Deviation")){
+		else if(graph.contains("Standard Deviation")){
 			d1 = group4.meanT;
 			d2 = group8.meanT;
 			d3 = group10.meanT;
@@ -512,7 +516,6 @@ public class Client extends JFrame{
 		
 		dataStringTemp = "Group 4=" + d1 + ":Group 8="+ d2 + ":Group 10=" + d3;
 		dataStringLight = "Group 4=" + e1 + ":Group 8="+ e2 + ":Group 10=" + e3;
-		System.out.println(dataStringTemp+"\n"+dataStringLight);
 		
 		displayMessage("Done");
 	}
@@ -578,7 +581,7 @@ public class Client extends JFrame{
 		message = "";
 		String temp="";
 		int counter = 0;
-		int timeToWait = 30;
+		int timeToWait = 70;
 		try {
 			while(!input.ready() && counter < timeToWait){
 				try{
