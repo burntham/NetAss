@@ -300,7 +300,7 @@ public class Client extends JFrame{
 			//e.printStackTrace();
 		}
 	}
-	
+	//handle login usrname psword
 	private void login(String user, String password){
 		String response = "";
 		sendData("login("+user+","+password+")");
@@ -316,6 +316,7 @@ public class Client extends JFrame{
 		displayMessage("\n" + response.substring(2));
 	}
 	
+	//handle retrieving some log data
 	private void getLogs(){
 		String response = "";
 		sendData("getLogs()");
@@ -343,27 +344,30 @@ public class Client extends JFrame{
 		displayMessage("\n" + message);
 	}
 
-	private String join(String [] strs, String spacer){
+	//Used to parse retrieve
+	/*private String join(String [] strs, String spacer){
 		if (strs.length==0){return strs[0];}
 		String result = strs[0]+spacer;
 		for (int i = 1; i<strs.length; i++){
 			result += spacer+strs[i];
 		}
 		return result;
-	}
+	}*/
 	
+	//get raw all - graphs all 3 groups raw data in different colours
 	private void getRawAll(String message){
 		parseMessage("get 10 raw", "graph");
 		parseMessage("get 8 raw", "graph");
 		parseMessage("get 4 raw", "graph");
 		String type;
-		if(message.contains(cmd.temp.toString())){type = "Temperature";}
-		else if(message.contains(cmd.light.toString())){type = "Light";}
-		else{displayMessage("\nNo valid graph arguments supplied.");return;}
+		if(message.contains(cmd.temp.toString())){type = "Temperature";}//graph temperature readings
+		else if(message.contains(cmd.light.toString())){type = "Light";}//graph Light readings
+		else{displayMessage("\nNo valid graph arguments supplied.");return;}// failed to draw
 		
-		drawGraphRaw("4 8 10", type);
+		drawGraphRaw("4 8 10", type);//draw the graph - this is a line graph plotting all groups data
 	}
 	
+	//get all returns the aggregated data for all groups
 	private void getAll(){
 		String response = "";
 		sendData("getAll()");
@@ -384,18 +388,18 @@ public class Client extends JFrame{
 		String toPrint1 = "\nTemperature:\nMean = " + d[0] + "\nMode = " + d[1] + "\nMedian = " + d[2] + "\nVariance = " + d[3] + "\nStandard Deviation = " + d[4];
 		String toPrint2 = "\nLight:\nMean = " + d[5] + "\nMode = " + d[6] + "\nMedian = " + d[7] + "\nVariance = " + d[8] + "\nStandard Deviation = " + d[9];
 	
-		displayMessage("\n" + toPrint1 + toPrint2);
+		displayMessage("\n" + toPrint1 + toPrint2);//display the aggregation data
 	}
-	
+	//get 10 raw >> specific group raw data and plot it on a line graph
 	private void getRawGroup(String id, String source, String message){
 		String response = "";
-		sendData("getRawGroup("+id+")");
+		sendData("getRawGroup("+id+")");//Server Call
 		response = getMessage();
-		if(response.length() < 1){
+		if(response.length() < 1){// if no usefull feedback recieved
 			displayMessage("\nNo message received from server.");
 			return;
 		}
-		else if(response.substring(0, 1).equalsIgnoreCase("0")){
+		else if(response.substring(0, 1).equalsIgnoreCase("0")){//if the server replies with a 0, there is a problem
 			displayMessage("\nError on server.");
 			return;
 		}
@@ -404,7 +408,7 @@ public class Client extends JFrame{
 			else if(id.equals("8")){ raw8 = response.substring(3);}
 			else if(id.equals("4")){ raw4 = response.substring(3);}
 		}catch(Exception e){
-			displayMessage("\nClient tried to be good for user, but data was not there - please no hate client :'(");
+			displayMessage("\nthere is group data missing - run 'get id all' to see which groups have data on the server");
 		}
 		if(source.contains("graph")){
 			return;
@@ -415,11 +419,11 @@ public class Client extends JFrame{
 			else if(message.contains(cmd.light.toString())){type = "Light";}
 			else{displayMessage("\nNo valid graph arguments supplied.");return;}
 			
-			drawGraphRaw(id, type);
+			drawGraphRaw(id, type);//draw the graph! - will be a libe graph for raw data
 		}
 		
 	}
-	
+	//handle returning aggregate data for specific group
 	private void getGroup(String id, String source){
 		String response = "";
 		sendData("getGroup("+id+")");
@@ -443,13 +447,14 @@ public class Client extends JFrame{
 			editLocalData(e, id, source);
 			return;
 		}
-		
+
 		String toPrint1 = "\nTemperature:\nMean = " + e[0] + "\nMode = " + e[1] + "\nMedian = " + e[2] + "\nVariance = " + e[3] + "\nStandard Deviation = " + e[4];
 		String toPrint2 = "\nLight:\nMean = " + e[5] + "\nMode = " + e[6] + "\nMedian = " + e[7] + "\nVariance = " + e[8] + "\nStandard Deviation = " + e[9];
 	
 		displayMessage("\n" + toPrint1 + toPrint2);
 	}
 	
+	//return the id's of the groups that have entered data
 	private void getGroupIDs() {
 		String response = "";
 		sendData("getGroupIds()");
@@ -465,6 +470,7 @@ public class Client extends JFrame{
 		displayMessage("\n" + response.substring(2));
 	}
 	
+	//This is used for bar chart drawing
 	private void editLocalData(String[] input, String id, String graph){
 		displayMessage("\nEditing local data...");
 		if(id.equals("4")){
@@ -552,6 +558,7 @@ public class Client extends JFrame{
 		displayMessage("Done");
 	}
 	
+	//Uploading sensor data
 	private void sendSensorData(String filename){
 		displayMessage("\nSending to server... ");
 		Scanner scan = null;
@@ -565,6 +572,8 @@ public class Client extends JFrame{
 			float light = 0;
 			long timestamp = 0;
 			String z="";
+
+			//Loop to convert all recorded sensor data (to be uploaded) to a single string before sending to server
 			while(scan.hasNext()){
 				line = scan.nextLine().split(" ");
 				try {
@@ -589,7 +598,7 @@ public class Client extends JFrame{
 				++counter;
 				
 			}
-
+			//format data for sending
 			z=z.replaceAll("\\]\\[", "],[");
 			sendData("sendData("+z+")");
 			String response = getMessage();
@@ -609,12 +618,13 @@ public class Client extends JFrame{
 			scan.close();
 	}
 	
+	//handle messages sent from the server
 	private String getMessage() {
 		
 		message = "";
 		String temp="";
 		int counter = 0;
-		int timeToWait = 70;
+		int timeToWait = 200;//how long before timeout?
 		try {
 			while(!input.ready() && counter < timeToWait){
 				try{
