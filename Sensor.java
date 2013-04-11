@@ -1,3 +1,10 @@
+//CSC3002F
+//Network Assignment 1
+//Gerard Nothnagel|Jared Norman|Daniel Burnham-King
+//NTHGER001|NRMJAR001|BRNDAN022
+//Group 10
+//Sensor class
+
 //Sensor Class - used store sensor aggregate sensor data ( the mode/median etc of each groups data)
 
 public class Sensor {

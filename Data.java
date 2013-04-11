@@ -1,3 +1,10 @@
+//CSC3002F
+//Network Assignment 1
+//Gerard Nothnagel|Jared Norman|Daniel Burnham-King
+//NTHGER001|NRMJAR001|BRNDAN022
+//Group 10
+//Data
+
 public class Data {
 	
 	String id;  // Group ID 	

@@ -1,3 +1,10 @@
+//CSC3002F
+//Network Assignment 1
+//Gerard Nothnagel|Jared Norman|Daniel Burnham-King
+//NTHGER001|NRMJAR001|BRNDAN022
+//Group 10
+//Driver Class
+
 //Client Test - this is the driver class for the client, preconfigured to connect to nightmare.cs.uct.ac.za
 
 import javax.swing.JFrame;

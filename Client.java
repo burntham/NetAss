@@ -1,3 +1,10 @@
+//CSC3002F
+//Network Assignment 1
+//Gerard Nothnagel|Jared Norman|Daniel Burnham-King
+//NTHGER001|NRMJAR001|BRNDAN022
+//Group 10
+//Client Class
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -319,7 +326,8 @@ public class Client extends JFrame{
 	//handle retrieving some log data
 	private void getLogs(){
 		String response = "";
-		sendData("getLogs()");
+		System.out.println("Retrieving Log file...");
+		sendData("getLogs()");		
 		response = getMessage();
 		if(response.length() < 1){
 			displayMessage("\nNo message received from server.");
@@ -370,6 +378,7 @@ public class Client extends JFrame{
 	//get all returns the aggregated data for all groups
 	private void getAll(){
 		String response = "";
+		System.out.println("retrieving all aggregate data...");
 		sendData("getAll()");
 		response = getMessage();
 		if(response.length() < 1){
@@ -393,6 +402,7 @@ public class Client extends JFrame{
 	//get 10 raw >> specific group raw data and plot it on a line graph
 	private void getRawGroup(String id, String source, String message){
 		String response = "";
+		System.out.println("retrieving raw data, this may take a while...");
 		sendData("getRawGroup("+id+")");//Server Call
 		response = getMessage();
 		if(response.length() < 1){// if no usefull feedback recieved
@@ -426,6 +436,7 @@ public class Client extends JFrame{
 	//handle returning aggregate data for specific group
 	private void getGroup(String id, String source){
 		String response = "";
+		System.out.println("retrieving aggregate data.");
 		sendData("getGroup("+id+")");
 		response = getMessage();
 		if(response.length() < 1){
@@ -457,6 +468,7 @@ public class Client extends JFrame{
 	//return the id's of the groups that have entered data
 	private void getGroupIDs() {
 		String response = "";
+		System.out.println("acquiring id's");
 		sendData("getGroupIds()");
 		response = getMessage();
 		if(message.length() < 1){
@@ -648,6 +660,7 @@ public class Client extends JFrame{
 		return message;
 	}
 	
+	//Bar Chart drawing
 	private void drawGraph(String message){
 		
 		String type = "";
@@ -674,7 +687,7 @@ public class Client extends JFrame{
 			reading = "Light" ;
 		}
 		else{displayMessage("\nData type specified not located in server.");return;}
-		 
+		
 		String title = type + " of Sensor Readings (" + reading + ")";
 		String category = "Sensor ID";
 		String value = type;
@@ -702,10 +715,11 @@ public class Client extends JFrame{
 			chart.pack();
 			RefineryUtilities.centerFrameOnScreen(chart);
 			chart.setVisible(true);
-			//chart.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			chart.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		}
 	}
 
+	//Draw Line graphs representing raw data
 	private void drawGraphRaw(String id, String type){
 		
 		boolean draw4 = false, draw8= false, draw10 = false;
@@ -735,7 +749,9 @@ public class Client extends JFrame{
 		
 	}
 	
+	//Fill data list used to generate graphable data from recorded raw
 	private void fillDataList(List<Data> data, String dataString, String type){
+		System.out.println("processing graph data, please wait...");
 		String a = dataString.replace("[", "");
 		String b = a.replace("]", "");
 		String[] c = b.split(",");
