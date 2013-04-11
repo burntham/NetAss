@@ -512,6 +512,7 @@ public class Client extends JFrame{
 		
 		dataStringTemp = "Group 4=" + d1 + ":Group 8="+ d2 + ":Group 10=" + d3;
 		dataStringLight = "Group 4=" + e1 + ":Group 8="+ e2 + ":Group 10=" + e3;
+		System.out.println(dataStringTemp+"\n"+dataStringLight);
 		
 		displayMessage("Done");
 	}
