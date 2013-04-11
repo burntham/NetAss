@@ -568,7 +568,7 @@ public class Client extends JFrame{
 		message = "nullMessage";
 		String temp="";
 		int counter = 0;
-		int timeToWait = 5;//in seconds
+		int timeToWait = 10;//in seconds
 		try {
 			while(!input.ready() && counter < timeToWait){
 				try{

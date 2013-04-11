@@ -7,7 +7,7 @@ public class ClientTest
 		
 		// if no command line args
 		if ( args.length == 0 ){
-			application = new Client( "nightmare.cs.uct.ac.za");// connect to localhost
+			application = new Client( "localhost");// connect to localhost
 		}
 		else{
 			application = new Client( args[0]);// use args to connect
