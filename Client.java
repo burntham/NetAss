@@ -12,6 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -95,6 +97,7 @@ public class Client extends JFrame{
 		}
 		catch ( IOException ioException )
 		{
+			//System.out.println("Client Runtime Error");
 			ioException.printStackTrace();
 		}
 		finally
@@ -145,7 +148,8 @@ public class Client extends JFrame{
 		}
 		catch ( IOException ioException )
 		{
-			ioException.printStackTrace();
+			//ioException.printStackTrace();
+			System.out.println("Connection close error");
 		}
 	}
 	
@@ -274,7 +278,7 @@ public class Client extends JFrame{
 						}
 					} catch (Exception e) {
 						displayMessage("\nError processing command: "+ message);
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 			}
@@ -287,7 +291,7 @@ public class Client extends JFrame{
 			}
 		} catch (Exception e) {
 			displayMessage("\nError processing command: "+ message);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
@@ -317,7 +321,27 @@ public class Client extends JFrame{
 			displayMessage("\nError on server.");
 			return;
 		}
-		displayMessage("\n" + response.substring(2));
+		String [] lines = response.substring(3,response.length()-1).split("\\],[\\s]*\\[");
+		String message = "";
+		for (String line : lines){
+			String [] row = line.split(",");
+			String user = row[0];
+			String action = row[1];
+			Timestamp stamp = new Timestamp(Long.parseLong(row[2].trim()));
+			Date date = new Date(stamp.getTime());
+			String timestamp = date.toString();
+			message += timestamp + ": " + user + action + "\n";
+		}
+		displayMessage("\n" + message);
+	}
+
+	private String join(String [] strs, String spacer){
+		if (strs.length==0){return strs[0];}
+		String result = strs[0]+spacer;
+		for (int i = 1; i<strs.length; i++){
+			result += spacer+strs[i];
+		}
+		return result;
 	}
 	
 	private void getRawAll(String message){
@@ -549,7 +573,7 @@ public class Client extends JFrame{
 				}
 				catch (Exception e) {
 					++failed;
-					System.out.println("Sending Sensor Data Failure");
+					System.out.println("1 failed to send");
 					//e.printStackTrace();
 				}
 				
@@ -569,7 +593,7 @@ public class Client extends JFrame{
 			if(scan != null)
 				scan.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			displayMessage("\nError while sending. ");
 			
 		}	
@@ -586,7 +610,7 @@ public class Client extends JFrame{
 		try {
 			while(!input.ready() && counter < timeToWait){
 				try{
-				Thread.sleep(1000);}catch(InterruptedException e){e.printStackTrace();}
+				Thread.sleep(1000);}catch(InterruptedException e){System.out.println("Threads sleep no longer, but in eternal slumber");} //e.printStackTrace();}
 				counter++;
 				System.out.println("Timeout: "+(timeToWait-counter)+" sec...");
 			}char c;
@@ -598,7 +622,8 @@ public class Client extends JFrame{
 			System.out.println(temp);
 			System.out.println("");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Error getting message");
+			//e.printStackTrace();
 		}
 		
 		System.out.println("Stopped waiting: " + counter);
@@ -727,7 +752,8 @@ public class Client extends JFrame{
 				}
 			}
 			catch(Exception e){
-				e.printStackTrace();
+				System.out.println("Error generating graph data");
+				//e.printStackTrace();
 			}
 		}
 		
