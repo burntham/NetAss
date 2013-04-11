@@ -35,8 +35,8 @@ Use:
 			:Draws a line graph representing all the groups data (colour coded by group)
 		graph <stat_type> <data_type>
 			:Draws a bar chart allowing for the comparison of the 3 groups' data
-
-
+		close bar
+			:closes an open bar chart
 
 	<data_type> can be any either:
 		light
@@ -74,3 +74,5 @@ File Descriptions:
 
 Notes:
 	Server files and client files can exist together peacefully, the same makefile can be used to compile both - refer to Readme-server.txt for more info
+
+	Do not close graph windows with the cross button. For bar charts, type close in the client. For linegraphs, pretend they are closed and run other commands
