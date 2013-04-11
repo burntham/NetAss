@@ -1,3 +1,5 @@
+//Sensor Class - used store sensor aggregate sensor data ( the mode/median etc of each groups data)
+
 public class Sensor {
 	
 	public String meanT;

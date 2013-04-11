@@ -76,6 +76,7 @@ public class Client extends JFrame{
 	    setSize(300,350);
 	    setVisible( true);
 	    
+	    //create sensor objects used to store aggregated data
 	    group4 = new Sensor();
 	    group8 = new Sensor();
 	    group10 = new Sensor();
@@ -97,8 +98,8 @@ public class Client extends JFrame{
 		}
 		catch ( IOException ioException )
 		{
-			//System.out.println("Client Runtime Error");
-			ioException.printStackTrace();
+			System.out.println("Client Runtime Error");
+			//ioException.printStackTrace();
 		}
 		finally
 		{
@@ -226,7 +227,7 @@ public class Client extends JFrame{
 					login(name, password);
 				}
 				catch(Exception e){
-					displayMessage("\nLogin Failed");
+					displayMessage("\nInvalid login, please try again.");
 				}
 				
 			}
@@ -304,7 +305,8 @@ public class Client extends JFrame{
 			return;
 		}
 		else if(message.substring(0, 1).equalsIgnoreCase("0")){
-			displayMessage("\nError on server.");
+			//server returns login error
+			//displayMessage("\nInvalid Login: please try again.");
 		}
 		displayMessage("\n" + response.substring(2));
 	}
@@ -614,13 +616,12 @@ public class Client extends JFrame{
 				counter++;
 				System.out.println("Timeout: "+(timeToWait-counter)+" sec...");
 			}char c;
-			System.out.print("Message is: ");
+			//System.out.print("Message is: ");
 			while(input.ready() && (c=(char)input.read())!='\n'){
 				temp+=c;
 				//System.out.print(c);
 			}
-			System.out.println(temp);
-			System.out.println("");
+			//System.out.println("");
 		} catch (IOException e) {
 			System.out.println("Error getting message");
 			//e.printStackTrace();
@@ -724,7 +725,7 @@ public class Client extends JFrame{
 		String[] c = b.split(",");
 		
 		if(c.length%3 != 0){
-			System.out.println("Some server cannot be converted");
+			System.out.println("Some data cannot be converted");
 		}
 		
 		double temp = 0;

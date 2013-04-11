@@ -1,3 +1,5 @@
+//Client Test - this is the driver class for the client, preconfigured to connect to nightmare.cs.uct.ac.za
+
 import javax.swing.JFrame;
 
 public class ClientTest
