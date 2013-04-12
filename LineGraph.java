@@ -5,7 +5,7 @@
 //Group 10
 //Line Graph
 
-/*Adapted from JFreeChart Class Library - Developers Guide v1.0.13, Chapter 7, Pages 59-61
+/*Code adapted from JFreeChart Class Library - Developer Guide v1.0.13, 11 May 2009, Chapter  7, Pages 59-61
  */
 
 import java.awt.Color;

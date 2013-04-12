@@ -5,6 +5,9 @@
 //Group 10
 //Data
 
+
+// Used to plot line graphs, where objects of type Data hold an (x, y) ordered pair
+// Also used for bar charts, where we have ordered pairs (id, value)
 public class Data {
 	
 	String id;  // Group ID 	

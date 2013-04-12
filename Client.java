@@ -5,6 +5,12 @@
 //Group 10
 //Client Class
 
+/*
+Code inspired by an example from:
+Paul Deitel, Harvey Deitel, Java For Programmers, Deitel Developer Series, 2nd edition
+pages 820-824
+*/
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -137,7 +143,7 @@ public class Client extends JFrame{
 	{
 		// enable enterField so client user can send messages
 		setTextFieldEditable(true);
-		do // process messages sent from server
+		do
 		{
 
 		} while( !message.equals("exit"));
@@ -307,7 +313,7 @@ public class Client extends JFrame{
 			//e.printStackTrace();
 		}
 	}
-	//handle login usrname psword
+	//handle login username password
 	private void login(String user, String password){
 		String response = "";
 		sendData("login("+user+","+password+")");

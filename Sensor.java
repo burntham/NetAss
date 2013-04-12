@@ -6,6 +6,7 @@
 //Sensor class
 
 //Sensor Class - used store sensor aggregate sensor data ( the mode/median etc of each groups data)
+// T = Temperature, L = Light
 
 public class Sensor {
 	
