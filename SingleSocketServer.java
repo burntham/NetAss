@@ -135,14 +135,13 @@ public class SingleSocketServer {
 					//When DBThread is ready, it'll look at this.request.method and process the request.
 					//Then it'll return a ResultSet from the DB... which we must process here.
 					//so now we wait...
-/*					while(!this.hasResult){
+					while(!this.hasResult){
 						try {
 							Thread.sleep(100);
 						} catch (InterruptedException e) {e.printStackTrace();}
-					}*/
+					}
 					//cool, the DB got back to us to we process the data here...
 					try{
-						System.out.println("this is interesting...");
 						ArrayList<Float> tempReadings = new ArrayList<Float>();
 						ArrayList<Float> lightReadings = new ArrayList<Float>();
 						float [] tempStats = null;
@@ -150,7 +149,7 @@ public class SingleSocketServer {
 						if (rs==null){response.success=false;response.responseString="Error occured in fetching result set from the database.";continue;}
 						int count =0;
 						while(rs.next()){
-							float temp = rs.getFloat("temp");
+							float temp = rs.getFloat("heat");
 							tempReadings.add(temp);
 							float light = rs.getFloat("light");
 							lightReadings.add(light);
@@ -346,7 +345,8 @@ public class SingleSocketServer {
 						}
 						String [] v = new String[group_ids.size()];
 						v=group_ids.toArray(v);
-						response.responseString = "[" + join(v,", ") + "]";
+						if (v.length==0){response.success=true; response.responseString="[]";response.send();continue;}						
+response.responseString = "[" + join(v,", ") + "]";
 						response.success=true;
 					}catch(SQLException e){e.printStackTrace();}
 					response.send();
@@ -356,13 +356,13 @@ public class SingleSocketServer {
 				 * @sendData
 				 * returns: success, message
 				 * success: 0 or 1
-				 * message: String, either a œsuccess or error message, relevant to whatever the value of success was.
+				 * message: String, either a Ã¢â‚¬Å“successÃ¢â‚¬Â or Ã¢â‚¬Å“errorÃ¢â‚¬Â message, relevant to whatever the value of success was.
 				 * */
 				/*
 				 * @sendData
 				 * returns: success, message
 				 * success: 0 or 1
-				 * message: String, either a success or error message, relevant to whatever the value of success was.
+				 * message: String, either a Ã¢â‚¬Å“successÃ¢â‚¬Â or Ã¢â‚¬Å“errorÃ¢â‚¬Â message, relevant to whatever the value of success was.
 				 * */
 				else if(request.method.equals("sendData")){
 					if (!loggedIn){response.responseString="You are not authenticated. Please log to continue.";response.success=false;response.send();continue;}
@@ -423,7 +423,7 @@ public class SingleSocketServer {
 				 * returns: success, [user1,action1,time1],[user2,action2,time2]...
 				 * success: 0 or 1
 				 * user: String, the username of the person committing the action.
-				 * action: String, either â€œuploaded n entries from mâ€ or â€œdownloaded n entries from mâ€ where n is the amount of entries, and m is the group (or all).
+				 * action: String, either Ã¢â‚¬Å“uploaded n entries from mÃ¢â‚¬Â or Ã¢â‚¬Å“downloaded n entries from mÃ¢â‚¬Â where n is the amount of entries, and m is the group (or all).
 				 * time is the number of milliseconds since 1 January 1970 (see Javas currentTimeMillis() method).
 				 * */
 				else if(request.method.equals("getLogs")){
@@ -606,22 +606,12 @@ public class SingleSocketServer {
 		BufferedWriter logfile;
 		ConcurrentLinkedQueue<String> logQueue;
 		public LogThread(){
-
-			String oldFile = readFile();
 			//read the old log file
 			BufferedReader inKb;
 			logQueue = new ConcurrentLinkedQueue<String>();
 			try {
 				//setup the new filewriter
-				this.logfile = new BufferedWriter(new FileWriter("log.txt"));
-				//write to file again
-				System.out.print("--->");
-				for (char c : oldFile.toCharArray()){
-					//System.out.print((int)c+"="+c+",");
-					if ((int)c<1000){
-					logfile.write(c);}
-				}
-				System.out.println("<---");
+				this.logfile = new BufferedWriter(new FileWriter("log.txt",true));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -676,7 +666,7 @@ public class SingleSocketServer {
 			return "";
 		}
 
-		private void log(String logMe){
+		private synchronized void log(String logMe){
 			System.out.print("Writing to log file: \"");
 			try {
 				for (char c : logMe.toCharArray()){

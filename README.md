@@ -1,4 +1,0 @@
-NetAss
-======
-
-Network assignment
