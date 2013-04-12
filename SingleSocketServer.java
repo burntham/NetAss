@@ -1,3 +1,8 @@
+//CSC3002F
+//Network Assignment 1
+//Group 10|8|4
+//Server 
+
 import java.net.*;
 import java.io.*;
 import java.sql.Connection;
